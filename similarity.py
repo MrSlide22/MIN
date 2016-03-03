@@ -6,9 +6,10 @@ Created on Mon Feb 22 13:37:24 2016
 """
 
 import random
+from operator import itemgetter
 
-nusers = 5
-nitems = 15
+nusers = 1000
+nitems = 10
 regions = 3
 percentages = [1, 0.3, 0.1]
 
@@ -51,31 +52,103 @@ def whoPurchasedItem(item):
             customers.append(i)
             
     return customers
+    
+def itemIntersection(item1, item2):
+    customers = []
+    
+    for i in range(nusers):
+        if table[i][item1] == 1 and table[i][item2] == 1:
+            customers.append(i)
+            
+    return customers
+    
+def itemUnion(item1, item2):
+    customers = []
+    
+    for i in range(nusers):
+        if table[i][item1] == 1 or table[i][item2] == 1:
+            customers.append(i)
+            
+    return customers
 
-def similarity(user):
+def similarity():
 
+    similarity = dict()
     # uncomment when is fixed and substitute 0 in whoPurcha... by item    
     # iterate all products
-    # for item in range(nitems):
+    for item in range(nitems):
+        #print '\nItem ' + str(item)
+        customers = whoPurchasedItem(item) # foreach item we get who purchased it
+        items = dict() # auxiliar variable
         
-    customers = whoPurchasedItem(0) # foreach item we get who purchased it
-    items = dict() # auxiliar variable
-    print "Users who bought item 0: " + str(customers)
-    
-    for c in customers: # now, we want to know the other items the customers had bought
-                        # and store them into items
-        for i in range(nitems):
+        for c in customers: # now, we want to know the other items the customers had bought
+                            # and store them into items
+            for i in range(nitems):
+                
+                if table[c][i] == 1 and i != item:
+                    items[i] = 1
+        
+        #just print some info
+        '''p = "\tOther items bought by customers: "
+        for key in items:
+            p += str(key) + ", "
+        print p.rstrip(', ')'''
+        
             
-            if table[c][i] == 1 and i != 0:
-                items[i] = 1
+        #calculate similarity
+        similarity[item] = list()
+        for i2 in items:
+            union = len(itemUnion(item, i2))
+            intersection = len(itemIntersection(item, i2))
+            similarity[item].append((i2, intersection / float(union)))
+            
+        '''print "\tSimilarities: "
+        for tupla in similarity[item]:
+            print '\t'+str(tupla[0]) + ': ' + str(tupla[1])'''
+            
+    return similarity
     
-    #just print some info
-    p = "Other items bought by customers: "
-    for key in items:
-        p += str(key) + ", "
-    print p.rstrip(', ')
-                    
+def itemsPurchasedByCustomer(c):
+    items = []
+    for i in range(nitems):
+        if(table[c][i] == 1):
+            items.append(i)
+    return items
+    
+def customerRecomendation(c, similarity):
+    recomendation = dict()
+    items = itemsPurchasedByCustomer(c)
+    for item in items:
+        
+        simItem = sorted(similarity[item], key=itemgetter(1))[0]
+        i = 0
+        while table[c][simItem[0]] != 1 and i < len(similarity[item]):
+            simItem = sorted(similarity[item], key=itemgetter(1))[0]
+            i+=1
+        if table[c][simItem[0]] != 1:
+            recomendation[simItem[0]] = simItem[1];
+    return recomendation
+    
+def customersRecomendation(similarity):
+    recomendations = dict()
+    
+    for c in range(nusers):
+        recomendations[c] = customerRecomendation(c, similarity)
+    
+        '''print 'Customer: ' + str(c)
+        for recomendation in recomendations[c]:
+            print str(recomendation) + ': '+ str(recomendations[c][recomendation])'''
+            
+    return recomendations
 
 if __name__ == "__main__":
     printTable()
-    similarity(1)
+    similarityDict = similarity()
+    #recomendations = customersRecomendation(similarityDict)
+    user = 0
+    while(user != -1):
+        user = input('Introduzca un usuario para ver su recomendacion: ')
+        recomendation = customerRecomendation(user, similarityDict)
+        
+        for recom in recomendation:
+                print str(recom) + ': '+ str(recomendation[recom])
