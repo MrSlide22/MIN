@@ -99,6 +99,7 @@ adult.loc[adult["sex"] == "Female", "sex"] = 1
 adult["native-country"] = adult["native-country"].map(map_country)
 print adult
 
+
 #Rest of non-numeric columns have been ignored
 
 adult.loc[adult["income"] == "<=50K", "income"] = 0
@@ -130,12 +131,13 @@ for train, test in kf:
     #Making predictions on the test fold
     test_predictions = alg.predict(adult[predictors].iloc[test,:])
     predictions.append(test_predictions)
-
+    
 #Logistic regression to clean up and map predictions to (1, 0)
 from sklearn import cross_validation
 from sklearn.linear_model import LogisticRegression
 alg = LogisticRegression(random_state=1)
-scores = cross_validation.cross_val_score(alg, adult[predictors], adult["income"], cv = 3)
+scores = cross_validation.cross_val_score(alg, adult[predictors], [x for x in adult["income"]], cv = 3)
+
 print "Predictions done with accuracy of: ", scores.mean(), "\n"
 
 adult_test = pandas.read_csv("Data/test.csv")
@@ -156,8 +158,8 @@ adult_test.occupation = adult_test.occupation.map(map_occupation)
 adult_test.race = adult_test.race.map(map_race)
 
 #sex
-adult_test.loc[adult_test["sex"] == "male", "sex"] = 0
-adult_test.loc[adult_test["sex"] == "female", "sex"] = 1
+adult_test.loc[adult_test["sex"] == "Male", "sex"] = 0
+adult_test.loc[adult_test["sex"] == "Female", "sex"] = 1
 
 #native-country
 adult_test["native-country"] = adult_test["native-country"].map(map_country)
@@ -168,14 +170,18 @@ adult_test.loc[adult["income"] == ">50K", "income"] = 1
 #Generating submission file
 print "Generating submission file..."
 alg = LogisticRegression(random_state=1)
-alg.fit(adult[predictors], adult["income"])
+alg.fit(adult[predictors], [x for x in adult["income"]])
 
-predictions = alg.predict(adult-test[predictors])
+predictions = alg.predict(adult_test[predictors])
 
 #Creating dataframe with only the columns Kaggle wants from dataset
 submission = pandas.DataFrame({
+        
         "income": predictions
     })
 
-submission.to_csv("kaggle.csv", index=False)
+f = open('Data/entrega.txt', 'w')
+for row in submission.values:
+    f.write(str(row[0])+'\n')
+
 print "Done."
