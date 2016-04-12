@@ -6,12 +6,14 @@ print adult.describe(), "\n"
 
 #mapping functions
 def map_workclass(x):
-    if "-gov" in x:
+    if x == "Without-pay" or x == "Never-worked":
         return int(0)
-    elif "Self-emp" in x or x == "Private":
+    elif x == "Private":
         return int(1)
-    else:
+    elif "-gov" in x:
         return int(2)
+    else:
+        return int(3)
 
 def map_education(x):
     grad = ["HS-grad", "Prof-school"]
@@ -28,37 +30,32 @@ def map_education(x):
         return int(4)
 
 def map_marital(x):
-    if "Married" in x:
-        return int(1)
-    else:
+    not_married = ["Never-married", "Widowed", "Divorced", "Separated"]
+    if x in not_married:
         return int(0)
+    else:
+        return int(1)
 
 def map_race(x):
-    if x == "White":
-        return int(1)
-    else:
+    if x == "White" or x == "Other":
         return int(0)
+    else:
+        return int(1)
 
 def map_country(x):
     first = ["United-States"]
-    second = ["England", "Canada", "Germany", "Outlying-US(Guam-USVI-etc)",
-              "Japan", "Greece", "Italy", "Poland", "Portugal", "Ireland",
-              "France", "Hungary", "Scotland", "Hong", "Holand-Netherlands"]
-    third = ["Puerto-Rico", "South", "Mexico", "Dominican-Republic", "Ecuador",
-             "Columbia", "Guatemala", "Nicaragua"]
-    if x in first:
+    second = ["England", "Canada", "Germany",
+              "Ireland", "Scotland"]
+    if x in first or x in second:
         return int(0)
-    elif x in second:
-        return int(1)
-    elif x in third:
-        return int(2)
     else:
-        return int(3)
+        return int(1)
     
 def map_occupation(x):
     admin = ["Adm-clerical"]
     military = ["Armed-Forces"]
-    blue_collar = ["Craft-repair", "Farming-fishing", "Handlers-cleaners", "Machine-op-inspct", "Transport-moving"]
+    blue_collar = ["Craft-repair", "Farming-fishing", "Handlers-cleaners",
+                   "Machine-op-inspct", "Transport-moving"]
     white_collar = ["Exec-managerial"]
     service = ["Other-service", "Priv-house-serv", "Protective-serv"]
     if x in admin:
@@ -111,7 +108,8 @@ from sklearn.linear_model import LinearRegression
 from sklearn.cross_validation import KFold
 
 #The columns we'll use to predict the target
-predictors = ["age", "workclass", "education", "marital-status", "occupation", "race", "sex", "native-country", "capital-gain", "capital-loss", "hours-per-week"]
+predictors = ["age", "workclass", "education", "marital-status", "occupation", "race", "sex",
+              "native-country","capital-gain", "capital-loss", "hours-per-week", "education-num"]
 
 #Initialize algorithm
 alg = LinearRegression()
@@ -176,12 +174,11 @@ predictions = alg.predict(adult_test[predictors])
 
 #Creating dataframe with only the columns Kaggle wants from dataset
 submission = pandas.DataFrame({
-        
         "income": predictions
     })
 
-f = open('Data/entrega.txt', 'w')
-for row in submission.values:
-    f.write(str(row[0])+'\n')
+submission.to_csv('entrega.txt', header=None, index=None, sep=' ', mode='a')
 
 print "Done."
+
+################
