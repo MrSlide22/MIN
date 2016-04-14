@@ -2,7 +2,9 @@ import pandas
 
 adult = pandas.read_csv("Data/data.csv")
 
-print adult.describe(), "\n"
+print adult.describe()
+
+
 
 #mapping functions
 def map_workclass(x):
@@ -11,42 +13,40 @@ def map_workclass(x):
     elif x == "Private":
         return int(1)
     elif "-gov" in x:
-        return int(2)
-    else:
         return int(3)
+    else:
+        return int(4)
 
 def map_education(x):
-    grad = ["HS-grad", "Prof-school"]
-    postgrad = ["Some-college", "Bachelors"]
+    grad = ["HS-grad", "Some-college"]
+    postgrad = ["Bachelors"]
     if "th" in x or x == "Preeschool":
         return int(0)
     elif x in grad:
         return int(1)
     elif "Assoc" in x:
-        return int(2)
-    elif x in postgrad:
         return int(3)
+    elif x in postgrad:
+        return int(2)
     else:
         return int(4)
 
 def map_marital(x):
-    not_married = ["Never-married", "Widowed", "Divorced", "Separated"]
+    not_married = ["Married-spouse-absent", "Divorced", "Separated",
+                   "Never-married", "Widowed"]
     if x in not_married:
         return int(0)
     else:
         return int(1)
 
 def map_race(x):
-    if x == "White" or x == "Other":
+    if x == "White":
         return int(0)
     else:
         return int(1)
 
 def map_country(x):
-    first = ["United-States"]
-    second = ["England", "Canada", "Germany",
-              "Ireland", "Scotland"]
-    if x in first or x in second:
+    if x == "United-States":
         return int(0)
     else:
         return int(1)
@@ -56,21 +56,30 @@ def map_occupation(x):
     military = ["Armed-Forces"]
     blue_collar = ["Craft-repair", "Farming-fishing", "Handlers-cleaners",
                    "Machine-op-inspct", "Transport-moving"]
-    white_collar = ["Exec-managerial"]
     service = ["Other-service", "Priv-house-serv", "Protective-serv"]
-    if x in admin:
-        return int(0)
-    elif x in military:
+    professional = ["Prof-specialty"]
+    sales = ["Sales"]
+    if x in military:
         return int(1)
     elif x in blue_collar:
         return int(2)
-    elif x in white_collar:
-        return int(3)
     elif x in service:
+        return int(3)
+    elif x in professional:
         return int(4)
-    else:
+    elif x in sales:
         return int(5)
-    
+    else:
+        return int(6)
+
+
+def map_age(x):
+    if x < 30:
+        return int(0)
+    else:
+        return int(1)
+
+
 #Converting non-numeric columns
 #workclass
 adult.workclass = adult.workclass.map(map_workclass)
@@ -91,13 +100,14 @@ adult.race = adult.race.map(map_race)
 adult.loc[adult["sex"] == "Male", "sex"] = 0
 adult.loc[adult["sex"] == "Female", "sex"] = 1
 
-
 #native-country
 adult["native-country"] = adult["native-country"].map(map_country)
-print adult
 
 
 #Rest of non-numeric columns have been ignored
+#simplifying age and capital hours
+adult.age = adult.age.map(map_age)
+adult["capital"] = adult["capital-gain"] + adult["capital-loss"]
 
 adult.loc[adult["income"] == "<=50K", "income"] = 0
 adult.loc[adult["income"] == ">50K", "income"] = 1
@@ -108,8 +118,8 @@ from sklearn.linear_model import LinearRegression
 from sklearn.cross_validation import KFold
 
 #The columns we'll use to predict the target
-predictors = ["age", "workclass", "education", "marital-status", "occupation", "race", "sex",
-              "native-country","capital-gain", "capital-loss", "hours-per-week", "education-num"]
+predictors = ["age", "workclass", "marital-status", "occupation", "race", "sex", "education-num",
+              "native-country","capital", "hours-per-week", "education"]
 
 #Initialize algorithm
 alg = LinearRegression()
@@ -133,7 +143,7 @@ for train, test in kf:
 #Logistic regression to clean up and map predictions to (1, 0)
 from sklearn import cross_validation
 from sklearn.linear_model import LogisticRegression
-alg = LogisticRegression(random_state=1)
+alg = LogisticRegression()
 scores = cross_validation.cross_val_score(alg, adult[predictors], [x for x in adult["income"]], cv = 3)
 
 print "Predictions done with accuracy of: ", scores.mean(), "\n"
@@ -165,6 +175,10 @@ adult_test["native-country"] = adult_test["native-country"].map(map_country)
 adult_test.loc[adult["income"] == "<=50K", "income"] = 0
 adult_test.loc[adult["income"] == ">50K", "income"] = 1
 
+#simplifying age and capital gains
+adult_test.age = adult_test.age.map(map_age)
+adult_test["capital"] = adult_test["capital-gain"] + adult_test["capital-loss"]
+
 #Generating submission file
 print "Generating submission file..."
 alg = LogisticRegression(random_state=1)
@@ -177,6 +191,8 @@ submission = pandas.DataFrame({
         "income": predictions
     })
 
+import os
+os.remove('entrega.txt')
 submission.to_csv('entrega.txt', header=None, index=None, sep=' ', mode='a')
 
 print "Done."
