@@ -1,0 +1,22 @@
+<div class="container">
+    <h1 class="text-center">Create operation</h1>
+    <ol class="breadcrumb">
+        <li><a href="/operations">Operations</a></li>
+        <li class="active">Add operation</li>
+    </ol>
+    <%= form_for @operation, url: {action: "create"} do |f| %>
+        <div class="form-group">
+            <label>First operand</label>
+            <%= f.number_field :op1, class: "form-control", autofocus: "" %>
+        </div>
+        <div class="form-group">
+            <label>Operator</label>
+            <%= f.text_field :operator, class: "form-control" %>
+        </div>
+        <div class="form-group">
+            <label>Second operand</label>
+            <%= f.number_field :op2, class: "form-control" %>
+        </div>
+        <%= f.submit "Create", class: "form-control btn btn-primary" %>
+    <% end %>
+</div> 

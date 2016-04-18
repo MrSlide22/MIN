@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  op1: 1
+  op2: 1
+  operator: MyText
+  response_time: 2016-04-12 14:05:02
+
+two:
+  op1: 1
+  op2: 1
+  operator: MyText
+  response_time: 2016-04-12 14:05:02

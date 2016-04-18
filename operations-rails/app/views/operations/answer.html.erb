@@ -1,0 +1,34 @@
+<div class="container">
+    <h1 class="text-center">Answer operation</h1>
+    <ol class="breadcrumb">
+        <li><a href="/operations">Operations</a></li>
+        <li class="active">Add operation</li>
+    </ol>
+    
+    <div class="panel panel-default">
+        <div class="panel-heading">Operation</div>
+        <div class="panel-body">
+                <p><%= @operation.op1 %> <%= @operation.operator %> <%= @operation.op2 %></p>
+        </div>
+    </div>
+    
+    <%= form_tag("/operations/answer/"+@operation.id.to_s, method: "post") do %>
+        <div class="form-group">
+            <%= text_field_tag(:result, "", class: "form-control", autofocus: "", placeholder: "Result") %>
+        </div>
+        <%= hidden_field_tag(:init_time, (Time.now.to_f * 1000).to_i, id: "initTime") %>
+        <%= hidden_field_tag(:end_time, '', id: "endTime") %>
+        <%= submit_tag("Answer", class: "form-control btn btn-primary", id: "submitBtn") %>
+    <% end %>
+    <script>
+        $(function() {
+            $('#submitBtn').on('click', function(e){
+                e.preventDefault();
+                var form = $(this).parent('form');
+                var initTime = $("#initTime").val();
+                $("#endTime").val(Date.now());
+                form.submit();
+            });
+        });
+    </script>
+</div> 

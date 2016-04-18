@@ -1,0 +1,22 @@
+<% content_for :title do %>
+  <title>ORTP | opertions</title>
+<% end %>
+
+<div class="container">
+    <h1 class="text-center">Listing operations</h1>
+    <ul class="list-group">
+    <% @operations.each do |operation| %>
+        <li class="list-group-item <% if operation.response_time == nil %> list-group-item-warning"<% end %>">
+            <%= link_to 'operations/'+ operation.id.to_s, class: "text-danger", data: {:confirm => 'Are you sure?'}, :method => :delete do %>
+                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            <% end %>
+
+            <%= operation.op1 %> <%= operation.operator %> <%= operation.op2 %> 
+
+            <%= link_to 'operations/'+ operation.id.to_s, class: "pull-right", :method => :get do %>
+                 <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+            <% end %>
+        </li>
+    <% end %>
+    </ul>
+</div>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <%= yield :title %>
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+    <%= csrf_meta_tags %>
+</head>
+<body>
+<%= render "menu" %>
+    
+<% if @error.present? and @error != false %>
+    <div class="alert alert-danger" role="alert"><%= @error %></div>
+<% elsif @error.present? %>
+    <div class="alert alert-success" role="alert">Succesfully answered</div>
+<% end %>
+    
+<% if params[:error].present? and params[:error] != 'false' %>
+    <div class="alert alert-danger" role="alert"><%= params[:error] %></div>
+<% elsif params[:error].present? %>
+    <div class="alert alert-success" role="alert">Success</div>
+<% end %>
+    
+<%= yield %>
+
+</body>
+</html>

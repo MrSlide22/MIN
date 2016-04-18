@@ -1,0 +1,22 @@
+<div class="container">
+    <h1 class="text-center">Show operation</h1>
+    <ol class="breadcrumb">
+        <li><a href="/operations">Operations</a></li>
+        <li class="active">Operation <%= @operation.id %></li>
+    </ol>
+    <ul class="list-group">
+        <li class="list-group-item"><strong>1st operand</strong><span class="pull-right"><%= @operation.op1 %></span></li>
+        <li class="list-group-item"><strong>2nd operand</strong><span class="pull-right"><%= @operation.operator %></span></li>
+        <li class="list-group-item"><strong>2nd operand</strong><span class="pull-right"><%= @operation.op2 %></span></li>
+        <li class="list-group-item list-group-item-info">
+            <strong>Response time</strong>
+            <span class="pull-right">
+                <% if @operation.response_time != nil %>
+                <%= @operation.response_time.to_f / 1000 %> sec <a href="/operations/reset-time/<%= @operation.id %>"><span class="glyphicon glyphicon-refresh" title="Reset time" aria-hidden="true"></span></a>
+                <% else %>
+                    <span class="text-warning">Not answered</span>
+                <% end %>
+            </span>
+        </li>
+    </ul>
+</div> 
