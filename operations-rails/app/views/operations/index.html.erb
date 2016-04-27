@@ -4,6 +4,7 @@
 
 <div class="container">
     <h1 class="text-center">Listing operations</h1>
+    <h4 class="text-center"><%= @operations.length %> operations</h4>
     <ul class="list-group">
     <% @operations.each do |operation| %>
         <li class="list-group-item <% if operation.response_time == nil %> list-group-item-warning"<% end %>">
@@ -19,4 +20,7 @@
         </li>
     <% end %>
     </ul>
+    <p class="text-center">
+        <%= link_to('Remove all', '/operations/remove-all', class: 'text-danger') %>                  
+    </p>
 </div>

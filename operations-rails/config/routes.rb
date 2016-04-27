@@ -5,6 +5,8 @@ Rails.application.routes.draw do
   # You can have the root of your site routed with "root"
   # root 'welcome#index'
     root 'operations#index'
+    get'/operations/add/:num', to: 'operations#add'
+    get'/operations/remove-all', to: 'operations#removeAll'
     get '/new_operation', to: 'operations#new'
     get '/answer_operation', to: 'operations#answer'
     get '/operations/reset-time/:id', to: 'operations#resetTime'
