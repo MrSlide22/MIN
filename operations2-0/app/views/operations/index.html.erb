@@ -1,0 +1,31 @@
+<h1>Listing operations</h1>
+ 
+<% if @operations.count == 0 %>
+  You haven't solved any operation yet. 
+  <%= link_to "Begin now!", new_operation_path %>
+<% else %>
+<%= link_to "Back", root_path %>
+<%= link_to "Export", operations_export_path %>
+
+<table>
+  <tr>
+    <th>id</th>
+    <th>op1</th>
+    <th>op</th>
+    <th>op2</th>
+    <th>time</th>
+  </tr>
+ 
+  <% @operations.each do |o| %>
+    <tr>
+      <td><%= o.id %></td>
+      <td><%= o.op1 %></td>
+      <td><%= o.op %></td>
+      <td><%= o.op2 %></td>
+      <td><%= o.time %></td>
+    </tr>
+  <% end %>
+</table>
+<%= link_to "Back", root_path %>
+<%= link_to "Export", operations_export_path %>
+<% end %>

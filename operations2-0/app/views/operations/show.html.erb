@@ -1,0 +1,23 @@
+<h1>What's the answer to... ?</h1>
+
+<%= @operation.op1 %> <%= @operation.op %> <%= @operation.op2 %>
+
+<%= form_tag(operation_answer_path(@operation.id), method: "post", autocomplete: "off")  do %>
+  <%= text_field_tag(:answer) %>
+  <%= hidden_field_tag(:id, @operation.id) %>
+  <%= hidden_field_tag(:init_time, Time.now.to_f * 1000, id: "initTime") %>
+  <%= hidden_field_tag(:end_time, '', id: "endTime") %>
+  <%= submit_tag("Answer", class: "form-control btn btn-primary", id: "submitBtn") %>
+<% end %>
+
+<script>
+	$(function() {
+        $('#submitBtn').on('click', function(e){
+            e.preventDefault();
+            var form = $(this).parent('form');
+            var initTime = $("#initTime").val();
+            $("#endTime").val(Date.now());
+            form.submit();
+    	});
+    });
+</script>
