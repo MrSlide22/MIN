@@ -1,0 +1,9 @@
+<% if @correct == true %>
+	<strong>Success!</strong><br>
+	You answered in <%= @operation.time.to_f %> secs.<br>
+	<%= link_to "Solve another one!", new_operation_path %>
+<% else %>
+	<strong>Wrong!</strong><br>
+	<%= link_to "Try again", @operation %>
+<% end %>
+<p><%= link_to "Back to menu", root_path %>
