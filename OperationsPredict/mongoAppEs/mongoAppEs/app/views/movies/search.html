@@ -1,0 +1,13 @@
+<%= simple_form_for :movies, url: search_path do |f| %>
+  <%= f.input :query %>
+  <%= f.submit :search %>
+<% end %>
+
+<%= @result.first.highlight.description.first.html_safe %>
+
+
+<style type="text/css">
+em{
+  color: red;
+}
+</style>

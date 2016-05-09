@@ -1,0 +1,10 @@
+¿cuánto es?!!
+<%= @operation.op1 %> + <%= @operation.op2 %>
+
+<form  action=<%= answer_operation_path(@operation.id)%> method="post">
+  <%= text_field_tag(:respuesta) %>
+  <%= submit_tag("Enviar") %>
+</form>
+
+Estimacion
+<%= @operation.estimation %>
